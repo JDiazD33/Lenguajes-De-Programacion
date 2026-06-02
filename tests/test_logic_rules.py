@@ -1,6 +1,7 @@
 """Tests para el modulo logico (logic_rules.py).
 
 Verifica hechos base, relaciones derivadas, reglas compuestas y consultas logicas con kanren.
+
 """
 
 import pytest
