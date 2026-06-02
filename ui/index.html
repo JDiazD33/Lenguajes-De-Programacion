@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Recomendacion de Revistas Cientificas</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-50 min-h-screen antialiased">
+
+    <!-- ============================================================ -->
+    <!-- HEADER: azul oscuro medianoche (#1e3a8a)                     -->
+    <!-- ============================================================ -->
+    <header class="bg-blue-900 text-white shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
+            <div class="flex flex-col items-center text-center">
+                <h1 class="text-2xl sm:text-3xl font-bold tracking-tight">
+                    Sistema de Recomendacion de Revistas Cientificas
+                </h1>
+                <p class="mt-2 text-blue-200 text-sm sm:text-base max-w-2xl">
+                    Encuentre la revista ideal para publicar su articulo de investigacion
+                </p>
+                <div class="mt-4 flex flex-wrap justify-center gap-2">
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-800 text-blue-200 border border-blue-700">
+                        Paradigma Imperativo/OOP
+                    </span>
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-800 text-blue-200 border border-blue-700">
+                        Paradigma Funcional
+                    </span>
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-800 text-blue-200 border border-blue-700">
+                        Paradigma Logico (kanren)
+                    </span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ============================================================ -->
+    <!-- MAIN: dos columnas (lg: 1/3 form + 2/3 resultados)           -->
+    <!-- ============================================================ -->
+    <main class="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+            <!-- ==================== PANEL IZQUIERDO: FORMULARIO ==================== -->
+            <div class="lg:col-span-1">
+                <div class="bg-white rounded-lg border border-slate-200 shadow-sm p-6 sticky top-6">
+                    <h2 class="text-base font-semibold text-slate-800 mb-5 flex items-center gap-2">
+                        <svg class="w-5 h-5 text-slate-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                        </svg>
+                        Criterios de Busqueda
+                    </h2>
+                    <form method="POST" action="/" class="space-y-5">
+
+                        <!-- Area Tematica -->
+                        <div>
+                            <label for="area" class="block text-sm font-medium text-slate-700 mb-1">
+                                Area Tematica
+                            </label>
+                            <select name="area" id="area"
+                                    class="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700
+                                           focus:border-blue-900 focus:ring-1 focus:ring-blue-900 transition-colors">
+                                <option value="">Cualquier area</option>
+                                {% for area in areas_disponibles %}
+                                <option value="{{ area }}" {% if preferencias.get('area') == area %}selected{% endif %}>
+                                    {{ area | capitalize }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <!-- Indexacion Deseada -->
+                        <div>
+                            <label for="indexacion" class="block text-sm font-medium text-slate-700 mb-1">
+                                Indexacion Deseada
+                            </label>
+                            <select name="indexacion" id="indexacion"
+                                    class="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700
+                                           focus:border-blue-900 focus:ring-1 focus:ring-blue-900 transition-colors">
+                                <option value="">Cualquier indexacion</option>
+                                <option value="scopus q1" {% if preferencias.get('indexacion') == 'scopus q1' %}selected{% endif %}>Scopus Q1</option>
+                                <option value="scopus q2" {% if preferencias.get('indexacion') == 'scopus q2' %}selected{% endif %}>Scopus Q2</option>
+                                <option value="scielo" {% if preferencias.get('indexacion') == 'scielo' %}selected{% endif %}>Scielo</option>
+                                <option value="latindex" {% if preferencias.get('indexacion') == 'latindex' %}selected{% endif %}>Latindex</option>
+                            </select>
+                        </div>
+
+                        <!-- Acepta Cobro de APC? -->
+                        <div>
+                            <label for="apc" class="block text-sm font-medium text-slate-700 mb-1">
+                                Acepta Cobro de APC?
+                            </label>
+                            <select name="apc" id="apc"
+                                    class="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700
+                                           focus:border-blue-900 focus:ring-1 focus:ring-blue-900 transition-colors">
+                                <option value="">Indistinto</option>
+                                <option value="si" {% if preferencias.get('apc') == 'si' %}selected{% endif %}>Si</option>
+                                <option value="no" {% if preferencias.get('apc') == 'no' %}selected{% endif %}>No</option>
+                            </select>
+                        </div>
+
+                        <!-- Tiempo Maximo Revision -->
+                        <div>
+                            <label for="tiempo_max" class="block text-sm font-medium text-slate-700 mb-1">
+                                Tiempo Maximo de Revision (meses)
+                            </label>
+                            <input type="number" name="tiempo_max" id="tiempo_max"
+                                   min="1" max="24" placeholder="ej: 6"
+                                   value="{{ preferencias.get('tiempo_max', '') }}"
+                                   class="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 placeholder-slate-400
+                                          focus:border-blue-900 focus:ring-1 focus:ring-blue-900 transition-colors">
+                        </div>
+
+                        <!-- Factor de Impacto Minimo -->
+                        <div>
+                            <label for="impacto_min" class="block text-sm font-medium text-slate-700 mb-1">
+                                Factor de Impacto Minimo
+                            </label>
+                            <input type="number" name="impacto_min" id="impacto_min"
+                                   min="0" max="100" step="0.1" placeholder="ej: 2.5"
+                                   value="{{ preferencias.get('impacto_min', '') }}"
+                                   class="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 placeholder-slate-400
+                                          focus:border-blue-900 focus:ring-1 focus:ring-blue-900 transition-colors">
+                        </div>
+
+                        <!-- Palabras Clave -->
+                        <div>
+                            <label for="palabras_clave" class="block text-sm font-medium text-slate-700 mb-1">
+                                Palabras Clave del Articulo
+                            </label>
+                            <input type="text" name="palabras_clave" id="palabras_clave"
+                                   placeholder="ej: machine learning, deep learning, computer vision"
+                                   value="{{ preferencias.get('palabras_clave', '') }}"
+                                   class="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 placeholder-slate-400
+                                          focus:border-blue-900 focus:ring-1 focus:ring-blue-900 transition-colors">
+                            <p class="mt-1 text-xs text-slate-400">
+                                Separadas por coma. Se usaran para calcular el puntaje de coincidencia tematica.
+                            </p>
+                        </div>
+
+                        <!-- Boton Buscar -->
+                        <button type="submit"
+                                class="w-full bg-blue-900 hover:bg-blue-800 active:bg-blue-950 text-white font-medium py-2.5 px-4 rounded-md text-sm
+                                       transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-blue-900 focus:ring-offset-2">
+                            Buscar Revistas Recomendadas
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- ==================== PANEL DERECHO: RESULTADOS ==================== -->
+            <div class="lg:col-span-2 space-y-6">
+
+                <!-- ------------------------------------------------------------------ -->
+                <!-- BLOQUE DE RESULTADOS (visible solo despues de enviar formulario)    -->
+                <!-- ------------------------------------------------------------------ -->
+                {% if resultados is defined and preferencias %}
+
+                <!-- BARRA DE ESTADISTICAS -->
+                <div class="bg-white rounded-lg border border-slate-200 shadow-sm p-5">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-base font-semibold text-slate-800 flex items-center gap-2">
+                            <svg class="w-5 h-5 text-slate-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                            </svg>
+                            Resultados de la Recomendacion
+                        </h2>
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-600">
+                            {{ total_consultas }} consulta(s) realizada(s)
+                        </span>
+                    </div>
+
+                    {% if estadisticas %}
+                    <div class="grid grid-cols-3 gap-4 border-t border-slate-100 pt-4">
+                        <div class="text-center">
+                            <p class="text-xs text-slate-500 uppercase tracking-wider">Revistas candidatas</p>
+                            <p class="text-2xl font-bold text-blue-900 mt-1">{{ estadisticas.total_candidatos }}</p>
+                        </div>
+                        <div class="text-center border-x border-slate-100">
+                            <p class="text-xs text-slate-500 uppercase tracking-wider">Puntaje maximo</p>
+                            <p class="text-2xl font-bold text-blue-900 mt-1">{{ estadisticas.max_puntaje }}</p>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-xs text-slate-500 uppercase tracking-wider">Promedio puntaje</p>
+                            <p class="text-2xl font-bold text-blue-900 mt-1">{{ estadisticas.promedio_puntaje }}</p>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- TARJETAS DE RESULTADOS (cards) -->
+                {% if resultados %}
+                <div class="space-y-3">
+                    {% for revista in resultados %}
+                    <div class="bg-white rounded-lg border border-slate-200 shadow-sm p-5 hover:border-slate-300 transition-colors duration-150">
+                        <div class="flex items-start gap-4">
+
+                            <!-- Ranking number -->
+                            <span class="flex-shrink-0 w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-sm font-bold text-slate-500">
+                                {{ loop.index }}
+                            </span>
+
+                            <!-- Journal info -->
+                            <div class="flex-1 min-w-0">
+                                <h3 class="text-sm font-semibold text-slate-800">
+                                    {{ revista.nombre }}
+                                </h3>
+
+                                <!-- Metrica row -->
+                                <div class="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-500">
+                                    <span>Area: <span class="font-medium text-slate-700">{{ revista.area | capitalize }}</span></span>
+                                    <span class="hidden sm:inline text-slate-300">|</span>
+                                    <span>Revision: <span class="font-medium text-slate-700">{{ revista.tiempo_revision }} meses</span></span>
+                                    <span class="hidden sm:inline text-slate-300">|</span>
+                                    <span>F. Impacto: <span class="font-medium text-slate-700">{{ revista.factor_impacto }}</span></span>
+                                </div>
+
+                                <!-- Badges row -->
+                                <div class="mt-2 flex flex-wrap items-center gap-1.5">
+                                    {% set idx = revista.indexacion | lower %}
+                                    {% if 'q1' in idx %}
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200">
+                                        {{ revista.indexacion }}
+                                    </span>
+                                    {% elif 'q2' in idx %}
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-600 border border-slate-200">
+                                        {{ revista.indexacion }}
+                                    </span>
+                                    {% elif 'scielo' in idx %}
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                        {{ revista.indexacion }}
+                                    </span>
+                                    {% else %}
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-600 border border-gray-200">
+                                        {{ revista.indexacion }}
+                                    </span>
+                                    {% endif %}
+
+                                    {% if revista.apc == 'si' %}
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-rose-50 text-rose-700 border border-rose-200">
+                                        Con APC
+                                    </span>
+                                    {% else %}
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                        Sin APC
+                                    </span>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <!-- Score column -->
+                            <div class="flex-shrink-0 text-right min-w-[80px]">
+                                <p class="text-lg font-bold text-blue-900 leading-tight">
+                                    {{ "%.2f"|format(revista.puntaje_total) }}
+                                </p>
+                                <div class="mt-1.5 w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                                    <div class="h-full bg-blue-900 rounded-full transition-all duration-300"
+                                         style="width: {{ revista.puntaje_total * 100 }}%;">
+                                    </div>
+                                </div>
+                                <div class="mt-1.5 flex justify-end gap-2 text-[10px] text-slate-400">
+                                    <span title="Coincidencia keywords">K: {{ "%.2f"|format(revista.puntajes_parciales.keywords) }}</span>
+                                    <span title="Tiempo revision">T: {{ "%.2f"|format(revista.puntajes_parciales.tiempo) }}</span>
+                                    <span title="Factor impacto">I: {{ "%.2f"|format(revista.puntajes_parciales.impacto) }}</span>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Formula del puntaje -->
+                <div class="text-center text-xs text-slate-400 py-2 border-t border-slate-100">
+                    Puntaje total = (Keywords x 0.40) + (Tiempo revision x 0.30) + (Factor impacto x 0.30)
+                </div>
+
+                {% else %}
+                <!-- Sin resultados -->
+                <div class="bg-white rounded-lg border border-slate-200 shadow-sm p-8 text-center">
+                    <svg class="mx-auto h-12 w-12 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/>
+                    </svg>
+                    <h3 class="mt-4 text-sm font-medium text-slate-700">
+                        No se encontraron revistas que cumplan los criterios
+                    </h3>
+                    <p class="mt-1 text-xs text-slate-500">
+                        Intente ampliar los filtros (seleccione "Cualquier area" o "Cualquier indexacion")
+                    </p>
+                </div>
+                {% endif %}
+
+                {% else %}
+                <!-- ------------------------------------------------------------------ -->
+                <!-- ESTADO INICIAL (aun no se ha realizado ninguna busqueda)            -->
+                <!-- ------------------------------------------------------------------ -->
+                <div class="bg-white rounded-lg border border-slate-200 shadow-sm p-8 text-center">
+                    <svg class="mx-auto h-16 w-16 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                    </svg>
+                    <h3 class="mt-4 text-sm font-medium text-slate-700">
+                        Sistema de Recomendacion de Revistas
+                    </h3>
+                    <p class="mt-2 text-sm text-slate-500 max-w-md mx-auto leading-relaxed">
+                        Complete los criterios en el panel izquierdo y presione
+                        <span class="font-medium text-slate-700">"Buscar Revistas Recomendadas"</span>
+                        para obtener recomendaciones personalizadas basadas en los tres paradigmas de programacion.
+                    </p>
+                </div>
+                {% endif %}
+
+            </div>
+            <!-- fin panel derecho -->
+
+        </div>
+        <!-- fin grid -->
+    </main>
+
+    <!-- ============================================================ -->
+    <!-- FOOTER                                                        -->
+    <!-- ============================================================ -->
+    <footer class="bg-blue-900 mt-12">
+        <div class="max-w-7xl mx-auto px-4 py-5 sm:px-6 lg:px-8 text-center">
+            <p class="text-sm text-blue-200">
+                Proyecto Multiparadigma &mdash; Sistema de Recomendacion de Revistas Cientificas
+            </p>
+            <p class="text-xs text-blue-300 mt-1">
+                Flask + kanren + Programacion Funcional
+            </p>
+        </div>
+    </footer>
+
+</body>
+</html>
