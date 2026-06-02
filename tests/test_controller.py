@@ -2,6 +2,7 @@
 
 Verifica encapsulamiento, herencia, polimorfismo, factory methods,
 value objects, y la orquestacion del sistema de recomendacion.
+
 """
 
 import pytest
