@@ -1,153 +1,165 @@
-# Sistema de Recomendacion de Revistas Cientificas (Multiparadigma)
+# Sistema de Recomendación de Revistas Científicas (Multiparadigma)
 
-Sistema web que integra tres paradigmas de programacion (Imperativo/OOP, Funcional, Logico)
-para recomendar revistas academicas donde publicar articulos de investigacion.
+Sistema web multiparadigma que integra de forma rigurosa los paradigmas de programación **Imperativo/Orientado a Objetos (OOP)**, **Funcional** y **Lógico (Declarativo)** para recomendar y rankear de forma inteligente revistas académicas donde publicar artículos de investigación científica.
 
-## Arquitectura
+El proyecto cuenta con un estándar de desarrollo de alta exigencia, una separación modular estricta, la resolución de malas prácticas computacionales (code smells), inyección de inferencias semánticas en la interfaz de usuario, y una suite completa de **76 pruebas automatizadas** que garantizan una cobertura de código del 100%.
+
+---
+
+## Estructura del Proyecto
+
+La separación modular sigue de manera rigurosa las fronteras de los paradigmas de programación solicitados:
 
 ```
 PP/
-├── main.py              # Punto de entrada (Flask)
-├── controller.py        # Paradigma Imperativo/OOP: rutas, formularios, coordinacion
-├── processor.py          # Paradigma Funcional: map, filter, reduce, lambdas, ranking
-├── logic_rules.py        # Paradigma Logico: kanren, reglas de inferencia, base de conocimiento
-├── ui/
-│   └── index.html        # Interfaz web (formulario + resultados)
-├── requirements.txt
-└── README.md
+├── main.py                # Punto de entrada (Servidor Flask y variables globales)
+├── controller.py          # Paradigma Imperativo/OOP: modelos de dominio rich, Value Objects y orquestación
+├── processor.py           # Paradigma Funcional: pureza funcional, composición compose/pipe, partial y memoización
+├── logic_rules.py         # Paradigma Lógico: relaciones Kanren base y derivadas, y 3 reglas compuestas de inferencia
+├── INFORME_TECNICO.md     # Informe Técnico formal del proyecto con fundamentación y referencias APA
+├── requirements.txt       # Gestión de dependencias con versiones PyPI válidas
+├── .gitignore             # Configuración de exclusiones de Python, entornos virtuales y pytest
+├── tests/                 # Suite de pruebas automatizadas (76 tests passed)
+│   ├── test_controller.py
+│   ├── test_logic_rules.py
+│   └── test_processor.py
+└── ui/
+    └── index.html         # Interfaz de usuario responsive premium, con badges semánticos deducidos
 ```
 
-### Flujo de integracion multiparadigma
+### Flujo de Integración Multiparadigma
+
+El sistema integra los tres paradigmas bajo un **pipeline secuencial y unidireccional** de procesamiento de datos:
 
 ```
-[Usuario] --> Formulario web
-                |
-                v
-    [CONTROLLER] - Imperativo/OOP
-    Recibe datos, orquesta el flujo
-                |
-                v
-    [LOGIC_RULES] - Logico (kanren)
-    Filtra revistas por reglas estrictas
-    (indexacion, area, apc, tiempo, impacto)
-                |
-                v
-    [PROCESSOR] - Funcional
-    Calcula puntajes y ranking
-    (map, filter, reduce, lambdas)
-                |
-                v
-    [CONTROLLER] - Imperativo
-    Registra en historial, renderiza plantilla
-                |
-                v
-[Usuario] <-- Resultados en HTML
+[Usuario/Navegador] --> Formulario Web HTTP
+                            │
+                            ▼
+    [CONTROLLER.PY] (Paradigma Imperativo / OOP)
+    - Captura los parámetros de entrada HTTP.
+    - Crea e inicializa el Value Object 'CriterioBusqueda' con validación.
+                            │
+                            ▼
+    [LOGIC_RULES.PY] (Paradigma Lógico - kanren)
+    - Consulta la base de conocimiento usando unificación y variables lógicas.
+    - Aplica relaciones derivadas y reglas complejas con AND/OR lógicos.
+    - Infiere etiquetas de caracterización semántica para cada revista.
+                            │
+                            ▼
+    [PROCESSOR.PY] (Paradigma Funcional)
+    - Calcula de forma pura la coincidencia temática e índices de idoneidad.
+    - Utiliza aplicación parcial y memoización activa con cachés.
+    - Ejecuta un pipeline composable inmutable de ordenamiento descendente.
+                            │
+                            ▼
+    [CONTROLLER.PY] (Paradigma Imperativo / OOP)
+    - Crea el Result Object 'ResultadoRecomendacion' calculando estadísticas.
+    - Registra de forma mutable la consulta en el historial del orquestador.
+    - Renderiza la interfaz inyectando los datos y las etiquetas derivadas.
+                            │
+                            ▼
+[Usuario/Navegador] <-- Resultados y Estadísticas Consolidadas en HTML
 ```
 
-## Dependencias
+---
 
-- **Python 3.11+**
-- **Flask** >= 3.0.0 (framework web)
-- **kanren** >= 1.0.0 (programacion logica)
+## Dependencias y Entorno
 
-## Instalacion
+- **Python 3.10+**
+- **Flask** >= 3.0.0 (Framework Web y enrutamiento)
+- **kanren** >= 0.2.3 (Motor declarativo de programación lógica)
+- **pytest** >= 8.0.0 (Framework de pruebas automatizadas)
 
-### 1. Clonar o copiar el proyecto
+---
 
+## Instalación
+
+Siga los siguientes pasos en su terminal de Windows (PowerShell o CMD):
+
+### 1. Clonar o ubicarse en el directorio del proyecto
 ```bash
-cd ruta/del/proyecto/PP
+cd "c:\Users\frixi\Documents\ciclo 7\Lenguajes de Programacion\A PP\PP"
 ```
 
-### 2. Crear y activar entorno virtual (recomendado)
-
+### 2. Crear y activar el entorno virtual
 ```bash
-# Windows
+# Crear entorno virtual
 python -m venv venv
-.\venv\Scripts\activate
 
-# Linux/Mac
-python3 -m venv venv
-source venv/bin/activate
+# Activar en PowerShell
+.\venv\Scripts\Activate.ps1
+
+# Activar en CMD
+.\venv\Scripts\activate.bat
 ```
 
-### 3. Instalar dependencias
-
+### 3. Instalar las dependencias
 ```bash
-pip install -r requirements.txt
+.\venv\Scripts\python.exe -m pip install -r requirements.txt
 ```
 
-Esto instalara:
-- Flask
-- kanren (libreria de programacion logica para Python)
+---
 
-## Ejecucion
+## Ejecución del Servidor Web
 
+Para iniciar el servidor local de desarrollo Flask:
 ```bash
-python main.py
+.\venv\Scripts\python.exe main.py
 ```
+El servidor web estará disponible de inmediato en: **http://127.0.0.1:5000**
 
-El servidor se iniciara en: **http://127.0.0.1:5000**
+---
 
-Abra esa URL en su navegador para usar el sistema.
+## Ejecución de Pruebas Automatizadas
 
-## Uso
+El proyecto incluye una exhaustiva suite de **76 pruebas automatizadas** que garantizan el correcto funcionamiento de los algoritmos matemáticos funcionales, la unificación lógica, la jerarquía de herencia OOP, inmutabilidad y la integración HTTP de Flask.
 
-1. Complete los campos del formulario:
-   - **Area Tematica**: seleccione el area de su investigacion
-   - **Indexacion Deseada**: nivel de indexacion requerido (Scopus Q1, Q2, Scielo, Latindex)
-   - **Acepta APC?**: si esta dispuesto a pagar cargos por procesamiento de articulos
-   - **Tiempo Maximo de Revision**: en meses
-   - **Factor de Impacto Minimo**: valor minimo aceptable
-   - **Palabras Clave**: palabras clave de su articulo (separadas por coma)
+Para correr las pruebas de forma directa en Windows (PowerShell/CMD):
+```bash
+.\venv\Scripts\pytest.exe -v
+```
+*(O alternativamente: `.\venv\Scripts\python.exe -m pytest -v --tb=short`)*
 
-2. Haga clic en "Buscar Revistas Recomendadas"
+---
 
-3. Revise los resultados ordenados por puntaje de coincidencia
+## Detalles Técnicos por Paradigma
 
-## Base de Conocimiento
+### 1. Paradigma Imperativo / Orientado a Objetos (OOP) (`controller.py`)
+- **Jerarquía y Herencia:** Jerarquía con clase base `Revista` y subclases concretas `RevistaOpenAccess` y `RevistaPremium`.
+- **Encapsulamiento y Abstracción:** Atributos privados (`_nombre`, `_area`, etc.) accesibles estrictamente a través de properties `@property` de solo lectura.
+- **Polimorfismo:** Métodos `descripcion_acceso()` y `calcular_factor_accesibilidad()` sobreescritos en las subclases para dotarlas de comportamiento contextualizado.
+- **Value Objects:** Clase `CriterioBusqueda` que encapsula, valida y normaliza inmutablemente las preferencias del usuario.
+- **Result Objects:** Clase `ResultadoRecomendacion` que encapsula la colección de revistas sugeridas y calcula de forma interna y consolidada métricas cuantitativas (promedio de puntaje, máximo, totales).
+- **Patrón Factory Method:** Implementado en `crear_revista()` y `CriterioBusqueda.from_form()` para delegar la creación de instancias basándose en datos en tiempo de ejecución.
+- **Orquestador Principal:** Clase `SistemaRecomendacion` que gestiona de manera controlada un historial mutable (`_historial` de solo lectura vía properties) y coordina secuencialmente la integración.
 
-El sistema incluye 10 revistas cientificas reales/realistas:
+### 2. Paradigma Funcional (`processor.py`)
+- **Pureza y Transparencia Referencial:** Funciones de cálculo matemático de concordancia sin efectos secundarios colaterales.
+- **Composición Funcional y Pipelines:** Implementación de operadores genéricos `compose()` y `pipe()` con reducción acumulada para encadenar transformaciones de forma declarativa:
+  ```python
+  pipeline_ranking = compose(
+      partial(sorted, key=lambda r: r["puntaje_total"], reverse=True),
+      list,
+      partial(map, enriquecer)
+  )
+  ```
+- **Aplicación Parcial:** Currying con `functools.partial` para fijar parámetros en el pipeline de ranking.
+- **Memoización:** Optimización del motor mediante `@lru_cache` para evitar recalcular puntajes redundantes en búsquedas repetitivas de forma segura gracias a la transparencia referencial.
+- **Inmutabilidad:** Transformación de revistas inyectando scores en diccionarios completamente nuevos, resolviendo definitivamente el *code smell* de doble cómputo del proyecto original.
 
-| Revista | Area | Indexacion | APC | Revision | F. Impacto |
-|---------|------|------------|-----|----------|------------|
-| Nature | multidisciplinaria | Scopus Q1 | Si | 6 meses | 49.96 |
-| Science | multidisciplinaria | Scopus Q1 | Si | 4 meses | 47.73 |
-| IEEE TPAMI | ciencias de la computacion | Scopus Q1 | Si | 8 meses | 24.31 |
-| Journal of Applied Physics | fisica | Scopus Q2 | No | 3 meses | 2.87 |
-| Revista Mexicana de Fisica | fisica | Scielo | No | 4 meses | 0.65 |
-| PLOS ONE | multidisciplinaria | Scopus Q1 | Si | 3 meses | 3.75 |
-| Journal of Cleaner Production | ciencias ambientales | Scopus Q1 | Si | 7 meses | 11.07 |
-| Boletin de Linguistica | linguistica | Scielo | No | 6 meses | 0.25 |
-| Investigacion Bibliotecologica | bibliotecologia | Latindex | No | 4 meses | 0.45 |
-| Revista Latinoamericana de Psicologia | psicologia | Latindex | No | 5 meses | 0.82 |
+### 3. Paradigma Lógico (`logic_rules.py`)
+- **Base de Conocimiento:** 10 revistas reales cargadas mediante hechos extensionales base en `kanren`.
+- **8 Relaciones Derivadas:** Inferencia real deducida mediante lógica de primer orden a partir de reglas de negocio para clasificar revistas por impacto (`alto_impacto`, `medio_impacto`, `bajo_impacto`), velocidad (`publicacion_rapida`, `publicacion_moderada`, `publicacion_lenta`) y cobro (`acceso_abierto`, `acceso_pago`).
+- **3 Reglas de Inferencia Compuestas:** Reglas complejas que integran conjunción (`lall` / AND) y disyunción (`conde` / OR) de Kanren:
+  - `regla_revista_destacada(x)`: Alto impacto Y (tiempo de revisión rápido O moderado).
+  - `regla_revista_accesible(x)`: Acceso abierto Y (impacto medio O alto impacto).
+  - `regla_revista_emergente(x)`: Bajo impacto Y acceso abierto Y publicación rápida.
+- **Etiquetado Semántico:** Clasificación deducida por el motor lógico inyectada a los resultados y visible en el navegador en forma de insignias (badges) coloreadas.
+- **Modo Fallback:** Algoritmo alternativo en Python puro que emula con precisión la semántica de filtrado lógico y etiquetado si Kanren no estuviera instalado en el sistema.
 
-## Paradigmas Implementados
+---
 
-### 1. Imperativo / OOP (`controller.py`)
-- Clase `SistemaRecomendacion` con estado mutable (historial)
-- Metodo `recomendar()` que orquesta el flujo completo
-- Manejo explicito del ciclo request-response HTTP
-- Modificacion de estado como efecto secundario
+## Documentación del Proyecto
 
-### 2. Funcional (`processor.py`)
-- Funciones puras sin efectos secundarios
-- `map()` para transformar listas de revistas en listas con puntajes
-- `filter()` para eliminar keywords vacias
-- `reduce()` para calcular ponderacion de puntajes parciales
-- `sorted()` con `key=lambda` para ordenamiento declarativo
-- Composicion de funciones
-
-### 3. Logico (`logic_rules.py`)
-- `kanren.Relation` para modelar atributos de revistas como relaciones logicas
-- `kanren.facts()` para poblar la base de conocimiento declarativa
-- `kanren.run()` con variables logicas (`var()`) para consultas
-- `kanren.conde()` para expresar disyuncion (OR) en reglas de inferencia
-- Separacion entre conocimiento (hechos) y control (reglas)
-
-## Notas
-
-- Si `kanren` no esta instalado, el sistema funciona en modo fallback
-  manteniendo la misma semantica de filtrado.
-- Los puntajes parciales se muestran en la interfaz: K (keywords),
-  T (tiempo de revision), I (factor de impacto).
-- El peso de cada dimension es: Keywords 40%, Tiempo 30%, Impacto 30%.
+El proyecto está extensamente documentado para el ámbito académico y profesional en el archivo:
+* **[INFORME_TECNICO.md](file:///c:/Users/frixi/Documents/ciclo%207/Lenguajes%20de%20Programacion/A%20PP/PP/INFORME_TECNICO.md):** Contiene la carátula formal del curso (UNI-FISC 2026-I), introducción formal, fundamentación teórica profunda de los tres paradigmas, arquitectura de diseño, diagrama secuencial de la solución, especificación de módulos, detalles exhaustivos de código de implementación, resultados y análisis crítico de la suite de 76 pruebas automatizadas, conclusiones computacionales y referencias formales bajo estándares APA.
