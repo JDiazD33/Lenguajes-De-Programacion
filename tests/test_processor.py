@@ -2,6 +2,7 @@
 
 Verifica las funciones puras de puntaje, la composicion funcional,
 la memoizacion y el pipeline de ranking.
+
 """
 
 import pytest
