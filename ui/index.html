@@ -246,6 +246,39 @@
                                     </span>
                                     {% endif %}
                                 </div>
+
+                                <!-- Etiquetas logicas derivadas (inferidas por kanren) -->
+                                {% if revista.etiquetas_logicas %}
+                                <div class="mt-2 flex flex-wrap items-center gap-1.5">
+                                    {% for etiqueta in revista.etiquetas_logicas %}
+                                        {% if etiqueta == 'Destacada' %}
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200">
+                                            {{ etiqueta }}
+                                        </span>
+                                        {% elif etiqueta == 'Accesible' %}
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-teal-50 text-teal-700 border border-teal-200">
+                                            {{ etiqueta }}
+                                        </span>
+                                        {% elif etiqueta == 'Emergente' %}
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-violet-50 text-violet-700 border border-violet-200">
+                                            {{ etiqueta }}
+                                        </span>
+                                        {% elif etiqueta == 'Alto Impacto' %}
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-yellow-50 text-yellow-700 border border-yellow-200">
+                                            {{ etiqueta }}
+                                        </span>
+                                        {% elif etiqueta == 'Rapida' %}
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-sky-50 text-sky-700 border border-sky-200">
+                                            {{ etiqueta }}
+                                        </span>
+                                        {% else %}
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-50 text-gray-600 border border-gray-200">
+                                            {{ etiqueta }}
+                                        </span>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
                             </div>
 
                             <!-- Score column -->
