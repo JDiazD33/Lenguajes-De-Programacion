@@ -76,9 +76,10 @@ El sistema integra los tres paradigmas bajo un **pipeline secuencial y unidirecc
 
 Siga los siguientes pasos en su terminal de Windows (PowerShell o CMD):
 
-### 1. Clonar o ubicarse en el directorio del proyecto
+### 1. Clonar o Posicionarse en la raíz del proyecto
 ```bash
-cd "c:\Users\frixi\Documents\ciclo 7\Lenguajes de Programacion\A PP\PP"
+# Abra su terminal (CMD o PowerShell) y diríjase a la carpeta del proyecto
+cd "/ruta/hacia/el/proyecto/X"
 ```
 
 ### 2. Crear y activar el entorno virtual
