@@ -1,3 +1,2 @@
 flask>=3.0.0
-kanren>=0.2.3
-pytest>=8.0.0
+kanren>=0.3.0
