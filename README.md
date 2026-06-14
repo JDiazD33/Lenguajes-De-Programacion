@@ -98,7 +98,7 @@ PP/
 ├── ui/
 │   └── index.html        # Interfaz web (formulario + resultados)
 ├── requirements.txt
-├── INFORME_TECNICO_FINAL.md
+├── ""
 └── README.md
 ```
 
@@ -163,7 +163,7 @@ El sistema incluye 10 revistas cientificas reales/realistas:
 ## Paradigmas Implementados
 
 > Nota: el sistema integra los tres paradigmas (Imperativo/OO, Funcional y Logico)
-> como se documenta en detalle en `INFORME_TECNICO_FINAL.md`. A continuacion un
+> como se documenta en detalle en ``. A continuacion un
 > resumen ejecutivo de los modulos del proyecto.
 
 ### 1. Imperativo / OOP (`controller.py`)
