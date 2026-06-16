@@ -335,12 +335,12 @@ def _obtener_etiquetas_logicas(nombre: str) -> List[str]:
     if nombre in set(consultar_emergentes()):
         etiquetas.append("Emergente")
 
-    # Etiquetas de velocidad (derivadas de relaciones base)
-    if KANREN_AVAILABLE:
-        x = var()
-        if list(run(0, x, lall(publicacion_rapida(x), lambda s: (s,) if s.get(x, None) == nombre else ()))):
-            pass  # ya manejado por las reglas compuestas
-    # Clasificacion simple basada en datos
+    # Etiquetas de velocidad e impacto (clasificacion basada en datos,
+    # coherente con las reglas compuestas declaradas arriba).
+    # AUDITORIA 2026-06-15: eliminado bloque dead code que pasaba un lambda
+    # arbitrario como goal a lall() (invalido en miniKanren) y nunca
+    # producia efecto (terminaba en pass). La etiqueta "Rapida" se
+    # determina correctamente con el dato crudo de tiempo_revision.
     revista_data = next((j for j in base_datos if j["nombre"] == nombre), None)
     if revista_data:
         if revista_data["factor_impacto"] >= 10.0:
