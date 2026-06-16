@@ -162,9 +162,9 @@ El sistema incluye 10 revistas cientificas reales/realistas:
 
 ## Paradigmas Implementados
 
-> Nota: el sistema integra los tres paradigmas (Imperativo/OO, Funcional y Logico)
-> como se documenta en detalle en ``. A continuacion un
-> resumen ejecutivo de los modulos del proyecto.
+> **Nota:** el sistema integra los tres paradigmas (Imperativo/OO, Funcional
+> y Logico) como se documenta en detalle en `INFORME_TECNICO_FINAL.md`.
+> A continuacion un resumen ejecutivo de los modulos del proyecto.
 
 ### 1. Imperativo / OOP (`controller.py`)
 - Clase `SistemaRecomendacion` con estado mutable (historial)
@@ -186,6 +186,38 @@ El sistema incluye 10 revistas cientificas reales/realistas:
 - `kanren.run()` con variables logicas (`var()`) para consultas
 - `kanren.conde()` para expresar disyuncion (OR) en reglas de inferencia
 - Separacion entre conocimiento (hechos) y control (reglas)
+
+## Pruebas (Tests)
+
+El proyecto incluye una suite de 78 pruebas automatizadas con `pytest` que cubren los tres modulos del sistema.
+
+### Ejecutar los tests
+
+```powershell
+# Windows (desde la carpeta del proyecto, con el venv activado)
+python -m pytest tests/ -v
+```
+
+```bash
+# macOS / Linux
+python3 -m pytest tests/ -v
+```
+
+Resultado esperado: `78 passed` (o mas si se anaden nuevos tests).
+
+### Que cubren los tests
+
+| Archivo | Modulo que prueba | Que verifica |
+|---------|-------------------|--------------|
+| `tests/test_controller.py` | `controller.py` (Imperativo/OOP) | Encapsulamiento, herencia, polimorfismo, factory methods, value objects, inmutabilidad, integracion Flask end-to-end |
+| `tests/test_processor.py` | `processor.py` (Funcional) | Funciones puras, composicion (compose/pipe), aplicacion parcial (partial), memoizacion (lru_cache), inmutabilidad de listas |
+| `tests/test_logic_rules.py` | `logic_rules.py` (Logico) | Hechos base, relaciones derivadas, reglas compuestas (AND/OR), etiquetado logico, filtrado por area/indexacion/APC/tiempo/impacto, modo fallback |
+
+### Notas sobre los tests
+
+- No requieren que el servidor Flask este corriendo; las pruebas de Flask usan el cliente de test integrado de Flask.
+- Si `kanren` no esta instalado, los tests del modulo logico prueban automaticamente el modo fallback.
+- Para ejecutar solo los tests de un modulo: `python -m pytest tests/test_processor.py -v`
 
 ## Notas
 
