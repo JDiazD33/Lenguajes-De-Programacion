@@ -1,7 +1,7 @@
-# Sistema de Recomendacion de Revistas Cientificas (Multiparadigma)
+# Recomendador de Revistas de Ingenieria (Multiparadigma)
 
 Sistema web que integra tres paradigmas de programacion (Imperativo/OOP, Funcional, Logico)
-para recomendar revistas academicas donde publicar articulos de investigacion.
+para recomendar revistas cientificas de **ingenieria** donde publicar articulos de investigacion.
 
 ---
 
@@ -13,7 +13,7 @@ Antes de empezar asegurate de tener instalado lo siguiente.
 
 | Dependencia | Version minima | Proposito |
 |-------------|----------------|-----------|
-| Python      | 3.11+          | Lenguaje de ejecucion (probado con 3.10.11, totalmente compatible con 3.11+) |
+| Python      | 3.11+          | Lenguaje de ejecucion |
 | pip         | 21+            | Gestor de paquetes de Python |
 | Flask       | 3.0.0+         | Framework web (capa de presentacion) |
 | kanren      | 0.3.0+         | Libreria de programacion logica (miniKanren) |
@@ -97,99 +97,141 @@ PP/
 ├── logic_rules.py        # Paradigma Logico: kanren, reglas de inferencia, base de conocimiento
 ├── ui/
 │   └── index.html        # Interfaz web (formulario + resultados)
+├── tests/
+│   ├── test_controller.py
+│   ├── test_processor.py
+│   └── test_logic_rules.py
 ├── requirements.txt
-├── ""
+├── .gitignore
 └── README.md
 ```
 
 ### Flujo de integracion multiparadigma
 
 ```
-[Usuario] --> Formulario web
-                |
-                v
+[Investigador] --> Formulario web
+                    Titulo + Resumen + Filtros
+                        |
+                        v
     [CONTROLLER] - Imperativo/OOP
     Recibe datos, orquesta el flujo
-                |
-                v
+                        |
+                        v
     [LOGIC_RULES] - Logico (kanren)
     Filtra revistas por reglas estrictas
     (indexacion, area, apc, tiempo, impacto)
-                |
-                v
+    + Etiquetas logicas inferidas
+                        |
+                        v
     [PROCESSOR] - Funcional
+    Extrae terminos del titulo/resumen (pipeline: tokenize -> filter stopwords -> dedup)
     Calcula puntajes y ranking
-    (map, filter, reduce, lambdas)
-                |
-                v
+    (map, filter, reduce, lambdas, compose, partial)
+                        |
+                        v
     [CONTROLLER] - Imperativo
     Registra en historial, renderiza plantilla
-                |
-                v
-[Usuario] <-- Resultados en HTML
+                        |
+                        v
+[Investigador] <-- Revistas recomendadas ordenadas por puntaje
 ```
 
 ## Uso
 
 1. Complete los campos del formulario:
-   - **Area Tematica**: seleccione el area de su investigacion
-   - **Indexacion Deseada**: nivel de indexacion requerido (Scopus Q1, Q2, Scielo, Latindex)
-   - **Acepta APC?**: si esta dispuesto a pagar cargos por procesamiento de articulos
-   - **Tiempo Maximo de Revision**: en meses
-   - **Factor de Impacto Minimo**: valor minimo aceptable
-   - **Palabras Clave**: palabras clave de su articulo (separadas por coma)
 
-2. Haga clic en "Buscar Revistas Recomendadas"
+   **Datos del articulo (lo que el profesor pide):**
+   - **Titulo del articulo**: titulo completo de su investigacion
+   - **Resumen del articulo**: abstract o resumen de su trabajo
+   - **Palabras clave** (opcional): complementan los terminos extraidos del titulo/resumen
 
-3. Revise los resultados ordenados por puntaje de coincidencia
+   **Filtros de busqueda:**
+   - **Area de ingenieria**: seleccione el area de su investigacion
+   - **Indexacion / Cuartil**: nivel de indexacion requerido (Scopus Q1, Q2, Scielo, Latindex)
+   - **Cobro de APC?**: si esta dispuesto a pagar cargos por procesamiento de articulos
+   - **Revision maxima (meses)**: tiempo maximo aceptable de revision
+   - **Impacto minimo**: factor de impacto minimo aceptable
+
+2. Haga clic en **"Recomendar revistas"**
+
+3. Revise los resultados ordenados por puntaje de coincidencia. Cada resultado muestra:
+   - Ranking numerico
+   - Nombre de la revista, area, tiempo de revision, factor de impacto
+   - Indexacion (cuartil) y si cobra APC
+   - Etiquetas logicas inferidas (Destacada, Accesible, Emergente, Alto Impacto, Rapida)
+   - Puntaje total con desglose: Terminos (T), Revision (R), Impacto (I)
 
 ## Base de Conocimiento
 
-El sistema incluye 10 revistas cientificas reales/realistas:
+El sistema incluye **10 revistas cientificas orientadas a ingenieria**:
 
 | Revista | Area | Indexacion | APC | Revision | F. Impacto |
 |---------|------|------------|-----|----------|------------|
 | Nature | multidisciplinaria | Scopus Q1 | Si | 6 meses | 49.96 |
 | Science | multidisciplinaria | Scopus Q1 | Si | 4 meses | 47.73 |
-| IEEE TPAMI | ciencias de la computacion | Scopus Q1 | Si | 8 meses | 24.31 |
-| Journal of Applied Physics | fisica | Scopus Q2 | No | 3 meses | 2.87 |
-| Revista Mexicana de Fisica | fisica | Scielo | No | 4 meses | 0.65 |
+| IEEE TPAMI | ingenieria de software | Scopus Q1 | Si | 8 meses | 24.31 |
+| IEEE TSE | ingenieria de software | Scopus Q1 | Si | 6 meses | 7.00 |
+| J. Applied Physics | ingenieria mecanica | Scopus Q2 | No | 3 meses | 2.87 |
 | PLOS ONE | multidisciplinaria | Scopus Q1 | Si | 3 meses | 3.75 |
-| Journal of Cleaner Production | ciencias ambientales | Scopus Q1 | Si | 7 meses | 11.07 |
-| Boletin de Linguistica | linguistica | Scielo | No | 6 meses | 0.25 |
-| Investigacion Bibliotecologica | bibliotecologia | Latindex | No | 4 meses | 0.45 |
-| Revista Latinoamericana de Psicologia | psicologia | Latindex | No | 5 meses | 0.82 |
+| J. Cleaner Production | ingenieria industrial | Scopus Q1 | Si | 7 meses | 11.07 |
+| Engineering Structures | ingenieria civil | Scopus Q1 | Si | 5 meses | 5.60 |
+| IEEE T. Power Electronics | ingenieria electrica | Scopus Q1 | Si | 4 meses | 7.50 |
+| Ingeniare | ingenieria general | Scielo | No | 4 meses | 0.50 |
 
 ## Paradigmas Implementados
-
-> **Nota:** el sistema integra los tres paradigmas (Imperativo/OO, Funcional
-> y Logico) como se documenta en detalle en `INFORME_TECNICO_FINAL.md`.
-> A continuacion un resumen ejecutivo de los modulos del proyecto.
 
 ### 1. Imperativo / OOP (`controller.py`)
 - Clase `SistemaRecomendacion` con estado mutable (historial)
 - Metodo `recomendar()` que orquesta el flujo completo
 - Manejo explicito del ciclo request-response HTTP
 - Modificacion de estado como efecto secundario
+- Herencia y polimorfismo: `RevistaOpenAccess` y `RevistaPremium` extienden `Revista`
+- Factory methods: `crear_revista()`, `CriterioBusqueda.from_form()`
+- Value Object: `CriterioBusqueda` (inmutable, con validacion)
+- Encapsulamiento: `@property` (solo lectura) en todas las entidades
 
 ### 2. Funcional (`processor.py`)
 - Funciones puras sin efectos secundarios
 - `map()` para transformar listas de revistas en listas con puntajes
-- `filter()` para eliminar keywords vacias
-- `reduce()` para calcular ponderacion de puntajes parciales
+- `filter()` para eliminar stopwords y keywords vacias
+- `reduce()` para calcular ponderacion de puntajes parciales y deduplicacion
 - `sorted()` con `key=lambda` para ordenamiento declarativo
-- Composicion de funciones
+- Composicion de funciones: `compose()` y `pipe()`
+- Aplicacion parcial: `functools.partial()` (currying)
+- Memoizacion: `@lru_cache` (justificada por transparencia referencial)
+- **Extraccion de terminos del titulo/resumen**: pipeline funcional puro
+  (tokenizar -> filtrar stopwords -> filtrar cortas -> deduplicar) sin
+  dependencias externas.
 
 ### 3. Logico (`logic_rules.py`)
 - `kanren.Relation` para modelar atributos de revistas como relaciones logicas
 - `kanren.facts()` para poblar la base de conocimiento declarativa
 - `kanren.run()` con variables logicas (`var()`) para consultas
 - `kanren.conde()` para expresar disyuncion (OR) en reglas de inferencia
+- `kanren.lall()` para conjuncion (AND) en reglas compuestas
+- **Relaciones derivadas**: alto_impacto, medio_impacto, bajo_impacto,
+  publicacion_rapida, publicacion_moderada, publicacion_lenta, acceso_abierto, acceso_pago
+  (inferidas a partir de los datos numericos, no estan en los datos crudos)
+- **Reglas compuestas**: revista destacada, revista accesible, revista emergente
+  (combinan multiples relaciones derivadas con AND/OR)
 - Separacion entre conocimiento (hechos) y control (reglas)
+
+## Formula de Puntaje
+
+El ranking de revistas se calcula como una suma ponderada de tres dimensiones:
+
+```
+Puntaje = (Terminos del articulo x 0.40) + (Tiempo revision x 0.30) + (Factor impacto x 0.30)
+```
+
+- **Terminos del articulo (40%)**: proporcion de terminos relevantes del
+  titulo + resumen + keywords que coinciden con el nombre y area de la revista.
+- **Tiempo revision (30%)**: a menor tiempo de revision, mayor puntaje.
+- **Factor impacto (30%)**: a mayor factor de impacto respecto al minimo deseado, mayor puntaje.
 
 ## Pruebas (Tests)
 
-El proyecto incluye una suite de 78 pruebas automatizadas con `pytest` que cubren los tres modulos del sistema.
+El proyecto incluye una suite de **77 pruebas automatizadas** con `pytest` que cubren los tres modulos del sistema.
 
 ### Ejecutar los tests
 
@@ -203,13 +245,13 @@ python -m pytest tests/ -v
 python3 -m pytest tests/ -v
 ```
 
-Resultado esperado: `78 passed` (o mas si se anaden nuevos tests).
+Resultado esperado: `77 passed` (o mas si se anaden nuevos tests).
 
 ### Que cubren los tests
 
 | Archivo | Modulo que prueba | Que verifica |
 |---------|-------------------|--------------|
-| `tests/test_controller.py` | `controller.py` (Imperativo/OOP) | Encapsulamiento, herencia, polimorfismo, factory methods, value objects, inmutabilidad, integracion Flask end-to-end |
+| `tests/test_controller.py` | `controller.py` (Imperativo/OOP) | Encapsulamiento, herencia, polimorfismo, factory methods, value objects, inmutabilidad, integracion Flask end-to-end, campos titulo/resumen |
 | `tests/test_processor.py` | `processor.py` (Funcional) | Funciones puras, composicion (compose/pipe), aplicacion parcial (partial), memoizacion (lru_cache), inmutabilidad de listas |
 | `tests/test_logic_rules.py` | `logic_rules.py` (Logico) | Hechos base, relaciones derivadas, reglas compuestas (AND/OR), etiquetado logico, filtrado por area/indexacion/APC/tiempo/impacto, modo fallback |
 
@@ -223,6 +265,8 @@ Resultado esperado: `78 passed` (o mas si se anaden nuevos tests).
 
 - Si `kanren` no esta instalado, el sistema funciona en modo fallback
   manteniendo la misma semantica de filtrado.
-- Los puntajes parciales se muestran en la interfaz: K (keywords),
-  T (tiempo de revision), I (factor de impacto).
-- El peso de cada dimension es: Keywords 40%, Tiempo 30%, Impacto 30%.
+- Los puntajes parciales se muestran en la interfaz: T (terminos del articulo),
+  R (tiempo de revision), I (factor de impacto).
+- El sistema extrae terminos relevantes del **titulo y resumen** del articulo
+  del investigador (limpiando stopwords en espanol e ingles), y los combina
+  con las keywords manuales para maximizar la precision de la recomendacion.

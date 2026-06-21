@@ -12,10 +12,43 @@ Paradigma funcional:
   referencial => cachear es seguro).
 - Inmutabilidad: no se modifican estructuras originales, se crean nuevas.
 - sorted() con key=lambda para ordenamiento declarativo.
+- EXTRACCION DE TERMINOS: el titulo y resumen del articulo del
+  investigador se procesan para obtener terminos relevantes (limpiando
+  stopwords en espanol), que alimentan el puntaje de coincidencia
+  tematica. Es un pipeline funcional puro (split -> filter -> map).
 """
 
 from functools import reduce, partial, lru_cache
 from typing import Dict, List, Tuple, Optional, Callable, Any
+
+
+# ============================================================
+# STOPWORDS (vocabulario funcional cerrado e inmutable)
+# ============================================================
+# Lista de palabras vacias en espanol + Ingles tecnico basico. Se usa
+# como conjunto inmutable (frozenset) para filtrar terminos irrelevantes
+# al extraer palabras del titulo y resumen del articulo. Definirla como
+# constante a nivel de modulo preserva la transparencia referencial de
+# las funciones puras que la consumen.
+
+_STOPWORDS: frozenset = frozenset({
+    # Articulos, pronombres y preposiciones (espanol)
+    "el", "la", "los", "las", "un", "una", "unos", "unas", "lo", "al", "del",
+    "de", "en", "y", "o", "u", "a", "ante", "bajo", "con", "contra", "desde",
+    "durante", "entre", "hacia", "hasta", "mediante", "para", "por", "segun",
+    "sin", "so", "sobre", "tras", "que", "se", "su", "sus", "es", "son", "fue",
+    "fueron", "era", "han", "ha", "he", "hemos", "como", "mas", "menos", "muy",
+    "tambien", "pero", "porque", "cuando", "donde", "cual", "cuales", "este",
+    "esta", "estos", "estas", "ese", "esa", "esos", "esas", "aquel", "aquella",
+    "esto", "eso", "aquello", "no", "si", "ya", "tal", "les", "le", "te", "me",
+    "nos", "os", "mi", "tu", "yo", "el", "ella", "ellos", "ellas",
+    # Conectores y vacios en Ingles (frecuentes en titulos/resumenes tecnicos)
+    "the", "of", "and", "in", "to", "for", "on", "with", "at", "by", "from",
+    "as", "an", "is", "are", "was", "were", "be", "been", "being", "this",
+    "that", "these", "those", "it", "its", "their", "our", "we", "they",
+    "a", "or", "using", "use", "used", "based", "into", "through", "can",
+    "will", "shall", "may", "might", "must", "should", "would", "could",
+})
 
 
 # ============================================================
@@ -68,6 +101,101 @@ def pipe(*funcs: Callable) -> Callable:
         lambda f, g: lambda *args, **kwargs: g(f(*args, **kwargs)),
         funcs
     )
+
+
+# ============================================================
+# EXTRACCION DE TERMINOS DEL ARTICULO DEL INVESTIGADOR
+# ============================================================
+
+def _tokenizar(texto: str) -> List[str]:
+    """Convierte un texto en una lista de tokens normalizados.
+
+    FUNCION PURA.
+    Pipeline funcional: lower -> split por no-palabra -> filter(no vacios).
+    No usa expresiones regulares complejas: simplemente separa por espacios y
+    signos de puntuacion, conservando unicamente caracteres alfanumericos y
+    acentos del espanol.
+
+    Args:
+        texto: cadena de entrada (titulo o resumen del articulo).
+
+    Returns:
+        Lista de tokens en minusculas, sin elementos vacios.
+    """
+    if not texto:
+        return []
+    # Normalizar a minusculas y separar por espacios/puntuacion.
+    # Se conservan letras (incluidos acentos), numeros y guiones.
+    limpio = texto.lower()
+    # Reemplazar cualquier caracter que no sea letra, numero o guion por espacio
+    import re
+    tokens = re.split(r"[^a-z0-9áéíóúñü-]+", limpio)
+    return list(filter(None, tokens))
+
+
+def _extraer_terminos(texto: str) -> List[str]:
+    """Extrae terminos relevantes de un texto eliminando stopwords.
+
+    FUNCION PURA.
+    Pipeline funcional completo:
+      tokenizar -> filter(stopword) -> filter(cortas) -> unique
+    Usa map()/filter() para transformar la lista de tokens en una lista
+    limpia de terminos significativos. Deduplica preservando el orden de
+    aparicion (orden de relevancia en el texto original).
+
+    Args:
+        texto: titulo o resumen del articulo del investigador.
+
+    Returns:
+        Lista de terminos relevantes unicos, en orden de aparicion.
+
+    Ejemplo:
+        >>> _extraer_terminos("Un sistema de recomendacion de revistas")
+        ['sistema', 'recomendacion', 'revistas']
+    """
+    tokens = _tokenizar(texto)
+
+    # filter: descartar stopwords y tokens demasiado cortos (<=2 caracteres),
+    # que casi nunca aportan valor tematico (ej: "de", "el", "en").
+    filtrados = filter(
+        lambda t: len(t) > 2 and t not in _STOPWORDS,
+        tokens,
+    )
+
+    # Deduplicar preservando el orden (primera aparicion = mas relevante).
+    # Se implementa de forma declarativa con reduce + acumulador de vistos.
+    vistos: set = set()
+    unicos = reduce(
+        lambda acc, t: acc + [t] if t not in vistos and not vistos.add(t) else acc,
+        filtrados,
+        [],
+    )
+    return unicos
+
+
+def extraer_terminos_articulo(titulo: str, resumen: str) -> List[str]:
+    """Extrae terminos relevantes combinando titulo y resumen del articulo.
+
+    FUNCION PURA.
+    Los terminos del TITULO aparecen primero (mayor peso posicional porque
+    en el ranking se conservan por orden de aparicion), seguidos de los
+    terminos del RESUMEN que no estuvieran ya en el titulo.
+
+    Args:
+        titulo: titulo del articulo del investigador.
+        resumen: resumen (abstract) del articulo.
+
+    Returns:
+        Lista combinada de terminos relevantes (titulo + resumen), unicos.
+    """
+    terminos_titulo = _extraer_terminos(titulo)
+    terminos_resumen = _extraer_terminos(resumen)
+    # Concatenar; los duplicados ya se eliminan dentro de _extraer_terminos,
+    # pero al fusionar dos textos puede haber repeticiones entre ambos.
+    combinados = terminos_titulo + [
+        t for t in terminos_resumen if t not in terminos_titulo
+    ]
+    return combinados
 
 
 # ============================================================
@@ -366,16 +494,32 @@ def rankear_revistas(
     # Paso 1: parsear keywords con pipeline funcional (map + filter)
     keywords = _parsear_keywords(preferencias.get("palabras_clave", ""))
 
+    # Paso 1b: extraer terminos relevantes del titulo + resumen del
+    # articulo del investigador (pipeline funcional tokenizar+filter).
+    # Estos terminos se fusionan con las keywords manuales: asi el
+    # puntaje de coincidencia tematica aprovecha TODO el contenido del
+    # articulo, no solo las palabras clave que el usuario escribio a mano.
+    terminos_articulo = extraer_terminos_articulo(
+        preferencias.get("titulo", ""),
+        preferencias.get("resumen", ""),
+    )
+
+    # Fusionar sin duplicados: keywords manuales primero (peso posicional),
+    # luego terminos extraidos del titulo/resumen que no estuvieran ya.
+    keywords_combinadas = keywords + [
+        t for t in terminos_articulo if t not in keywords
+    ]
+
     # Paso 2: parsear parametros numericos con funciones puras
     tiempo_max = _parsear_numero(preferencias.get("tiempo_max", ""), int)
     impacto_min = _parsear_numero(preferencias.get("impacto_min", ""), float)
 
     # Paso 3: crear evaluador parcialmente aplicado (partial / currying)
-    # Fija keywords, tiempo_max e impacto_min; la funcion resultante
-    # solo necesita recibir el journal.
+    # Fija keywords_combinadas, tiempo_max e impacto_min; la funcion
+    # resultante solo necesita recibir el journal.
     enriquecer = partial(
         _enriquecer_revista,
-        keywords=keywords,
+        keywords=keywords_combinadas,
         tiempo_max=tiempo_max,
         impacto_min=impacto_min,
     )

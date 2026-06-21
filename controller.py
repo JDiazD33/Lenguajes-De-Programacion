@@ -230,6 +230,8 @@ class CriterioBusqueda:
         tiempo_max: str = "",
         impacto_min: str = "",
         palabras_clave: str = "",
+        titulo: str = "",
+        resumen: str = "",
     ):
         """Inicializa y normaliza los criterios de busqueda.
 
@@ -240,6 +242,8 @@ class CriterioBusqueda:
             tiempo_max: tiempo maximo de revision (string).
             impacto_min: factor de impacto minimo (string).
             palabras_clave: keywords separadas por coma.
+            titulo: titulo del articulo del investigador.
+            resumen: resumen (abstract) del articulo del investigador.
         """
         self._area = area.strip().lower() if area else ""
         self._indexacion = indexacion.strip().lower() if indexacion else ""
@@ -247,6 +251,11 @@ class CriterioBusqueda:
         self._tiempo_max = tiempo_max.strip() if tiempo_max else ""
         self._impacto_min = impacto_min.strip() if impacto_min else ""
         self._palabras_clave = palabras_clave.strip() if palabras_clave else ""
+        # El titulo y resumen se conservan sin normalizar a minusculas para
+        # poder mostrarlos legibles en la interfaz; el processor se encarga
+        # de normalizarlos al extraer los terminos relevantes.
+        self._titulo = titulo.strip() if titulo else ""
+        self._resumen = resumen.strip() if resumen else ""
 
     @classmethod
     def from_form(cls, form_data) -> "CriterioBusqueda":
@@ -268,6 +277,8 @@ class CriterioBusqueda:
             tiempo_max=form_data.get("tiempo_max", ""),
             impacto_min=form_data.get("impacto_min", ""),
             palabras_clave=form_data.get("palabras_clave", ""),
+            titulo=form_data.get("titulo", ""),
+            resumen=form_data.get("resumen", ""),
         )
 
     def to_dict(self) -> Dict[str, str]:
@@ -283,6 +294,8 @@ class CriterioBusqueda:
             "tiempo_max": self._tiempo_max,
             "impacto_min": self._impacto_min,
             "palabras_clave": self._palabras_clave,
+            "titulo": self._titulo,
+            "resumen": self._resumen,
         }
 
     @property
@@ -300,6 +313,16 @@ class CriterioBusqueda:
     @property
     def palabras_clave(self) -> str:
         return self._palabras_clave
+
+    @property
+    def titulo(self) -> str:
+        """Titulo del articulo del investigador."""
+        return self._titulo
+
+    @property
+    def resumen(self) -> str:
+        """Resumen (abstract) del articulo del investigador."""
+        return self._resumen
 
     def __repr__(self) -> str:
         return (

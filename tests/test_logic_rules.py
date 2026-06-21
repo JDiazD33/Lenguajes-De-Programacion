@@ -86,16 +86,16 @@ class TestReglasKanren:
     def test_relaciones_derivadas(self):
         """Verifica que las relaciones numericas derivadas esten bien pobladas."""
         x = var()
-        
+
         # Nature (FI = 49.96) debe ser de alto impacto
         revistas_alto_impacto = list(run(0, x, alto_impacto(x)))
         assert "Nature" in revistas_alto_impacto
         assert "Science" in revistas_alto_impacto
-        
-        # Revista Mexicana de Fisica (FI = 0.65) debe ser de bajo impacto
+
+        # Ingeniare (FI = 0.50) debe ser de bajo impacto
         revistas_bajo_impacto = list(run(0, x, bajo_impacto(x)))
-        assert "Revista Mexicana de Fisica" in revistas_bajo_impacto
-        
+        assert "Ingeniare. Revista Iberoamericana de Ingenieria" in revistas_bajo_impacto
+
         # Journal of Applied Physics (tiempo = 3) debe ser de publicacion rapida
         revistas_rapidas = list(run(0, x, publicacion_rapida(x)))
         assert "Journal of Applied Physics" in revistas_rapidas
@@ -117,9 +117,9 @@ class TestReglasKanren:
         assert "Journal of Applied Physics" in accesibles
         
         # Revista emergente: abierta, bajo impacto y rapida.
-        # Revista Mexicana de Fisica (apc="no", FI=0.65, tiempo=4) -> emergente
+        # Ingeniare (apc="no", FI=0.50, tiempo=4) -> emergente
         emergentes = list(run(0, x, regla_revista_emergente(x)))
-        assert "Revista Mexicana de Fisica" in emergentes
+        assert "Ingeniare. Revista Iberoamericana de Ingenieria" in emergentes
 
 
 # ============================================================
@@ -148,7 +148,7 @@ class TestConsultasLogicas:
         """Valida que consultar_emergentes devuelva revistas abiertas, rapidas y con FI < 1.0."""
         res = consultar_emergentes()
         assert isinstance(res, list)
-        assert "Revista Mexicana de Fisica" in res
+        assert "Ingeniare. Revista Iberoamericana de Ingenieria" in res
         assert "Nature" not in res  # apc = si, FI = 49.96
 
 
@@ -166,9 +166,11 @@ class TestEtiquetadoLogico:
         assert "Alto Impacto" in etiquetas
         assert "Emergente" not in etiquetas
 
-    def test_etiquetado_mexicana_fisica(self):
-        """Revista Mexicana de Fisica debe ser emergente e impacto bajo."""
-        etiquetas = _obtener_etiquetas_logicas("Revista Mexicana de Fisica")
+    def test_etiquetado_ingeniare(self):
+        """Ingeniare debe ser emergente y rapida (bajo impacto)."""
+        etiquetas = _obtener_etiquetas_logicas(
+            "Ingeniare. Revista Iberoamericana de Ingenieria"
+        )
         assert "Emergente" in etiquetas
         assert "Rapida" in etiquetas
         assert "Alto Impacto" not in etiquetas
@@ -194,14 +196,14 @@ class TestAplicarReglas:
             assert "etiquetas_logicas" in r
 
     def test_filtrado_area_exacta(self):
-        """Filtrar por area exacta (ej. fisica) debe incluir fisica y multidisciplinarias."""
-        res = aplicar_reglas({"area": "fisica"})
+        """Filtrar por area exacta (ej. ingenieria civil) debe incluir el area y multidisciplinarias."""
+        res = aplicar_reglas({"area": "ingenieria civil"})
         areas = set(r["area"] for r in res)
-        # Debe contener fisica y multidisciplinaria
-        assert "fisica" in areas
+        # Debe contener ingenieria civil y multidisciplinaria
+        assert "ingenieria civil" in areas
         assert "multidisciplinaria" in areas
-        # No debe contener computacion
-        assert "ciencias de la computacion" not in areas
+        # No debe contener ingenieria electrica
+        assert "ingenieria electrica" not in areas
 
     def test_filtrado_indexacion(self):
         """Filtrar por indexacion especifica."""
@@ -234,8 +236,8 @@ class TestAplicarReglas:
     def test_filtrado_complejo_vacio(self):
         """Criterios demasiado estrictos deben devolver una lista vacia."""
         res = aplicar_reglas({
-            "area": "linguistica",
-            "indexacion": "scopus q1",
+            "area": "ingenieria civil",
+            "indexacion": "scielo",
             "impacto_min": "50.0"
         })
         assert res == []
@@ -273,11 +275,11 @@ def test_obtener_indexaciones_disponibles():
 
 def test_fallback_igualdad():
     """Verifica que el modo fallback de los mismos resultados que el modo normal."""
-    prefs = {"area": "fisica", "indexacion": "scopus q2", "apc": "no"}
+    prefs = {"area": "ingenieria mecanica", "indexacion": "scopus q2", "apc": "no"}
     normal = aplicar_reglas(prefs)
     fallback = _filtrar_fallback(prefs)
-    
+
     nombres_normal = sorted([r["nombre"] for r in normal])
     nombres_fallback = sorted([r["nombre"] for r in fallback])
-    
+
     assert nombres_normal == nombres_fallback

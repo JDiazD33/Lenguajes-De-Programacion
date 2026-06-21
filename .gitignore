@@ -2,6 +2,7 @@
 venv/
 .venv/
 env/
+source/
 
 
 # Cache de Python

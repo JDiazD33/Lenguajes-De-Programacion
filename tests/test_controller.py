@@ -109,33 +109,49 @@ class TestCriterioBusqueda:
     def test_normalizacion_de_valores(self):
         """Valida que normalice los textos a minusculas y limpie espacios."""
         c = CriterioBusqueda(
-            area="  Computacion  ",
+            area="  Ingenieria de Software  ",
             indexacion="  SCOPUS q1  ",
             apc="  SI  ",
             tiempo_max="  5  ",
             impacto_min="  2.5  ",
-            palabras_clave="  machine, learning  "
+            palabras_clave="  machine, learning  ",
+            titulo="  Analisis de Redes  ",
+            resumen="  Resumen del articulo  ",
         )
-        assert c.area == "computacion"
+        assert c.area == "ingenieria de software"
         assert c.indexacion == "scopus q1"
         assert c.apc == "si"
         assert c.palabras_clave == "machine, learning"
+        # titulo y resumen se conservan sin lowercase (legibilidad en UI)
+        assert c.titulo == "Analisis de Redes"
+        assert c.resumen == "Resumen del articulo"
 
     def test_factory_method_from_form(self):
         """Simula request.form y crea CriterioBusqueda."""
         form_mock = {
-            "area": "Fisica",
+            "area": "Ingenieria civil",
             "indexacion": "Cualquier",
             "apc": "no",
             "tiempo_max": "12",
             "impacto_min": "1.0",
-            "palabras_clave": "optica"
+            "palabras_clave": "estructuras",
+            "titulo": "Analisis sismico de puentes",
+            "resumen": "Estudio del comportamiento estructural bajo cargas sismicas",
         }
         c = CriterioBusqueda.from_form(form_mock)
-        assert c.area == "fisica"
+        assert c.area == "ingenieria civil"
         assert c.indexacion == "cualquier"
         assert c.apc == "no"
         assert c.to_dict()["tiempo_max"] == "12"
+        assert c.titulo == "Analisis sismico de puentes"
+        assert c.resumen == "Estudio del comportamiento estructural bajo cargas sismicas"
+
+    def test_to_dict_contiene_titulo_y_resumen(self):
+        """El dict serializado debe incluir los nuevos campos titulo y resumen."""
+        c = CriterioBusqueda(titulo="Mi titulo", resumen="Mi resumen")
+        d = c.to_dict()
+        assert d["titulo"] == "Mi titulo"
+        assert d["resumen"] == "Mi resumen"
 
 
 # ============================================================
@@ -186,11 +202,11 @@ class TestResultadoRecomendacion:
 
     def test_historial_entry(self):
         """Verifica el formato del diccionario para el historial."""
-        criterios = CriterioBusqueda(area="fisica")
+        criterios = CriterioBusqueda(area="ingenieria civil")
         revistas = [{"nombre": "R1", "puntaje_total": 0.8}]
         res = ResultadoRecomendacion(criterios, revistas, "time")
         entry = res.to_historial_entry()
-        assert entry["preferencias"]["area"] == "fisica"
+        assert entry["preferencias"]["area"] == "ingenieria civil"
         assert entry["total_candidatos"] == 1
         assert entry["timestamp"] == "time"
         assert entry["mensaje"] is None
@@ -213,17 +229,17 @@ class TestSistemaRecomendacion:
     def test_flujo_recomendar_exito(self):
         """Verifica la ejecucion completa del pipeline y adicion a historial."""
         sys = SistemaRecomendacion()
-        criterios = CriterioBusqueda(area="fisica", palabras_clave="physics")
-        
+        criterios = CriterioBusqueda(area="ingenieria mecanica", palabras_clave="physics")
+
         resultado = sys.recomendar(criterios)
         assert isinstance(resultado, ResultadoRecomendacion)
         assert sys.total_consultas == 1
-        
+
         last = sys.obtener_ultimo_resultado()
         assert last is not None
-        assert last["preferencias"]["area"] == "fisica"
+        assert last["preferencias"]["area"] == "ingenieria mecanica"
         assert last["total_candidatos"] > 0
-        
+
         # Verificar que la revista devuelta este enriquecida
         revista_top = resultado.revistas[0]
         assert "puntaje_total" in revista_top
@@ -234,12 +250,14 @@ class TestSistemaRecomendacion:
         """Verifica comportamiento cuando ninguna revista cumple las condiciones."""
         sys = SistemaRecomendacion()
         # Filtro imposible para asegurar 0 resultados
-        criterios = CriterioBusqueda(area="linguistica", indexacion="scopus q1", impacto_min="100.0")
-        
+        criterios = CriterioBusqueda(
+            area="ingenieria civil", indexacion="scielo", impacto_min="100.0"
+        )
+
         resultado = sys.recomendar(criterios)
         assert resultado.total == 0
         assert sys.total_consultas == 1
-        
+
         last = sys.obtener_ultimo_resultado()
         assert last is not None
         assert "NINGUNA revista cumple los criterios estrictos." in last["mensaje"]
@@ -268,23 +286,26 @@ class TestFlaskIntegration:
         with app.test_client() as client:
             response = client.get("/")
             assert response.status_code == 200
-            # Debe contener elementos del formulario
-            assert b"Sistema de Recomendacion de Revistas Cientificas" in response.data
-            assert b"Palabras Clave del Articulo" in response.data
+            # Debe contener elementos del formulario (nuevo framing)
+            assert b"Donde publicar mi articulo de investigacion" in response.data
+            assert b"Titulo del articulo" in response.data
+            assert b"Resumen del articulo" in response.data
 
     def test_index_post_recomendacion(self):
         """Verifica que el POST procese y devuelva resultados."""
         with app.test_client() as client:
             post_data = {
-                "area": "fisica",
+                "area": "ingenieria mecanica",
                 "indexacion": "cualquier",
                 "apc": "cualquier",
                 "tiempo_max": "",
                 "impacto_min": "",
-                "palabras_clave": "physics"
+                "palabras_clave": "physics",
+                "titulo": "Estudio de materiales aplicados",
+                "resumen": "Analisis de aleaciones para ingenieria mecanica",
             }
             response = client.post("/", data=post_data)
             assert response.status_code == 200
             # Debe mostrar las recomendaciones
-            assert b"Resultados de la Recomendacion" in response.data
-            assert b"Revistas candidatas" in response.data
+            assert b"Revistas recomendadas" in response.data
+            assert b"Candidatas" in response.data

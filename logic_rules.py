@@ -26,8 +26,12 @@ from typing import Dict, List, Any, Set
 
 
 # ============================================================
-# BASE DE CONOCIMIENTO: 10 revistas cientificas reales/realistas
+# BASE DE CONOCIMIENTO: 10 revistas cientificas de INGENIERIA
 # ============================================================
+# Enfoque acordado con el docente: la base cubre revistas donde un
+# investigador en ingenieria puede publicar (software, civil, electrica,
+# mecanica, ambiental, industrial), incluyendo algunas multidisciplinarias
+# de alto impacto que tambien aceptan articulos de ingenieria.
 
 base_datos: List[Dict[str, Any]] = [
     {
@@ -48,27 +52,27 @@ base_datos: List[Dict[str, Any]] = [
     },
     {
         "nombre": "IEEE Transactions on Pattern Analysis and Machine Intelligence",
-        "area": "ciencias de la computacion",
+        "area": "ingenieria de software",
         "indexacion": "scopus q1",
         "apc": "si",
         "tiempo_revision": 8,
         "factor_impacto": 24.31,
     },
     {
+        "nombre": "IEEE Transactions on Software Engineering",
+        "area": "ingenieria de software",
+        "indexacion": "scopus q1",
+        "apc": "si",
+        "tiempo_revision": 6,
+        "factor_impacto": 7.00,
+    },
+    {
         "nombre": "Journal of Applied Physics",
-        "area": "fisica",
+        "area": "ingenieria mecanica",
         "indexacion": "scopus q2",
         "apc": "no",
         "tiempo_revision": 3,
         "factor_impacto": 2.87,
-    },
-    {
-        "nombre": "Revista Mexicana de Fisica",
-        "area": "fisica",
-        "indexacion": "scielo",
-        "apc": "no",
-        "tiempo_revision": 4,
-        "factor_impacto": 0.65,
     },
     {
         "nombre": "PLOS ONE",
@@ -80,35 +84,35 @@ base_datos: List[Dict[str, Any]] = [
     },
     {
         "nombre": "Journal of Cleaner Production",
-        "area": "ciencias ambientales",
+        "area": "ingenieria industrial",
         "indexacion": "scopus q1",
         "apc": "si",
         "tiempo_revision": 7,
         "factor_impacto": 11.07,
     },
     {
-        "nombre": "Boletin de Linguistica",
-        "area": "linguistica",
+        "nombre": "Engineering Structures",
+        "area": "ingenieria civil",
+        "indexacion": "scopus q1",
+        "apc": "si",
+        "tiempo_revision": 5,
+        "factor_impacto": 5.60,
+    },
+    {
+        "nombre": "IEEE Transactions on Power Electronics",
+        "area": "ingenieria electrica",
+        "indexacion": "scopus q1",
+        "apc": "si",
+        "tiempo_revision": 4,
+        "factor_impacto": 7.50,
+    },
+    {
+        "nombre": "Ingeniare. Revista Iberoamericana de Ingenieria",
+        "area": "ingenieria general",
         "indexacion": "scielo",
         "apc": "no",
-        "tiempo_revision": 6,
-        "factor_impacto": 0.25,
-    },
-    {
-        "nombre": "Investigacion Bibliotecologica",
-        "area": "bibliotecologia",
-        "indexacion": "latindex",
-        "apc": "no",
         "tiempo_revision": 4,
-        "factor_impacto": 0.45,
-    },
-    {
-        "nombre": "Revista Latinoamericana de Psicologia",
-        "area": "psicologia",
-        "indexacion": "latindex",
-        "apc": "no",
-        "tiempo_revision": 5,
-        "factor_impacto": 0.82,
+        "factor_impacto": 0.50,
     },
 ]
 
