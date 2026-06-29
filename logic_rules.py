@@ -41,6 +41,7 @@ base_datos: List[Dict[str, Any]] = [
         "apc": "si",
         "tiempo_revision": 6,
         "factor_impacto": 49.96,
+        "url": "https://www.nature.com/nature",
     },
     {
         "nombre": "Science",
@@ -49,6 +50,7 @@ base_datos: List[Dict[str, Any]] = [
         "apc": "si",
         "tiempo_revision": 4,
         "factor_impacto": 47.73,
+        "url": "https://www.science.org/journal/science",
     },
     {
         "nombre": "IEEE Transactions on Pattern Analysis and Machine Intelligence",
@@ -57,6 +59,7 @@ base_datos: List[Dict[str, Any]] = [
         "apc": "si",
         "tiempo_revision": 8,
         "factor_impacto": 24.31,
+        "url": "https://ieeexplore.ieee.org/xpl/RecentIssue.jsp?punumber=34",
     },
     {
         "nombre": "IEEE Transactions on Software Engineering",
@@ -65,6 +68,7 @@ base_datos: List[Dict[str, Any]] = [
         "apc": "si",
         "tiempo_revision": 6,
         "factor_impacto": 7.00,
+        "url": "https://ieeexplore.ieee.org/xpl/RecentIssue.jsp?punumber=32",
     },
     {
         "nombre": "Journal of Applied Physics",
@@ -73,6 +77,7 @@ base_datos: List[Dict[str, Any]] = [
         "apc": "no",
         "tiempo_revision": 3,
         "factor_impacto": 2.87,
+        "url": "https://pubs.aip.org/aip/jap",
     },
     {
         "nombre": "PLOS ONE",
@@ -81,6 +86,7 @@ base_datos: List[Dict[str, Any]] = [
         "apc": "si",
         "tiempo_revision": 3,
         "factor_impacto": 3.75,
+        "url": "https://journals.plos.org/plosone/",
     },
     {
         "nombre": "Journal of Cleaner Production",
@@ -89,6 +95,7 @@ base_datos: List[Dict[str, Any]] = [
         "apc": "si",
         "tiempo_revision": 7,
         "factor_impacto": 11.07,
+        "url": "https://www.sciencedirect.com/journal/journal-of-cleaner-production",
     },
     {
         "nombre": "Engineering Structures",
@@ -97,6 +104,7 @@ base_datos: List[Dict[str, Any]] = [
         "apc": "si",
         "tiempo_revision": 5,
         "factor_impacto": 5.60,
+        "url": "https://www.sciencedirect.com/journal/engineering-structures",
     },
     {
         "nombre": "IEEE Transactions on Power Electronics",
@@ -105,6 +113,7 @@ base_datos: List[Dict[str, Any]] = [
         "apc": "si",
         "tiempo_revision": 4,
         "factor_impacto": 7.50,
+        "url": "https://ieeexplore.ieee.org/xpl/RecentIssue.jsp?punumber=63",
     },
     {
         "nombre": "Ingeniare. Revista Iberoamericana de Ingenieria",
@@ -113,6 +122,7 @@ base_datos: List[Dict[str, Any]] = [
         "apc": "no",
         "tiempo_revision": 4,
         "factor_impacto": 0.50,
+        "url": "https://www.scielo.cl/revistas/ingeniare/iaboutj.htm",
     },
 ]
 

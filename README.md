@@ -147,7 +147,7 @@ PP/
 
    **Filtros de busqueda:**
    - **Area de ingenieria**: seleccione el area de su investigacion
-   - **Indexacion / Cuartil**: nivel de indexacion requerido (Scopus Q1, Q2, Scielo, Latindex)
+   - **Indexacion / Cuartil**: nivel de indexacion requerido (Scopus Q1, Q2, Scielo)
    - **Cobro de APC?**: si esta dispuesto a pagar cargos por procesamiento de articulos
    - **Revision maxima (meses)**: tiempo maximo aceptable de revision
    - **Impacto minimo**: factor de impacto minimo aceptable

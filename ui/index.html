@@ -109,7 +109,6 @@
                                 <option value="scopus q1" {% if preferencias.get('indexacion') == 'scopus q1' %}selected{% endif %}>Scopus Q1</option>
                                 <option value="scopus q2" {% if preferencias.get('indexacion') == 'scopus q2' %}selected{% endif %}>Scopus Q2</option>
                                 <option value="scielo" {% if preferencias.get('indexacion') == 'scielo' %}selected{% endif %}>Scielo</option>
-                                <option value="latindex" {% if preferencias.get('indexacion') == 'latindex' %}selected{% endif %}>Latindex</option>
                             </select>
                         </div>
 
@@ -324,6 +323,19 @@
                             </div>
 
                         </div>
+
+                        <!-- Boton: fila separada, alineada a la derecha -->
+                        {% if revista.url %}
+                        <div class="mt-4 pt-3 border-t border-slate-100 flex justify-end">
+                            <a href="{{ revista.url }}" target="_blank" rel="noopener noreferrer"
+                               class="inline-flex items-center gap-1.5 rounded border border-slate-300 bg-slate-50 px-3.5 py-2 text-xs font-medium text-slate-700 hover:bg-slate-900 hover:text-slate-100 hover:border-slate-900 transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-slate-700 focus:ring-offset-1">
+                                <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+                                </svg>
+                                Visitar sitio web
+                            </a>
+                        </div>
+                        {% endif %}
                     </div>
                     {% endfor %}
                 </div>
