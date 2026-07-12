@@ -16,7 +16,7 @@ Antes de empezar asegurate de tener instalado lo siguiente.
 | Python      | 3.11+          | Lenguaje de ejecucion |
 | pip         | 21+            | Gestor de paquetes de Python |
 | Flask       | 3.0.0+         | Framework web (capa de presentacion) |
-| kanren      | 0.3.0+         | Libreria de programacion logica (miniKanren) |
+| kanren      | 0.2.3+         | Libreria de programacion logica (miniKanren) |
 
 > **Opcional pero muy recomendado:** `git` para clonar el repositorio y un
 > navegador moderno (Chrome, Firefox, Edge o Safari actualizado).
@@ -81,7 +81,7 @@ Para detener el servidor pulsa `Ctrl + C` en la terminal.
 | `python: command not found` (Mac) | Usa `python3` en su lugar, o instala Python con `brew install python@3.11` |
 | `python: command not found` (Windows) | Reinstala Python desde python.org marcando "Add Python to PATH" |
 | `pip` no se reconoce | Ejecuta `python -m pip install -r requirements.txt` |
-| `ERROR: No matching distribution found for kanren` | Verifica tu conexion a internet; `kanren 0.3.0` existe en PyPI |
+| `ERROR: No matching distribution found for kanren` | Verifica tu conexion a internet; `kanren 0.2.3` existe en PyPI |
 | Puerto 5000 ocupado | Edita `main.py` linea final y cambia `port=5000` por otro (ej. 5050) |
 | `Activate.ps1` bloqueado por politica (Windows) | Ejecuta `Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned` una vez |
 
@@ -97,11 +97,14 @@ PP/
 ├── logic_rules.py        # Paradigma Logico: kanren, reglas de inferencia, base de conocimiento
 ├── ui/
 │   └── index.html        # Interfaz web (formulario + resultados)
+├── static/
+│   └── favicon.svg       # Icono de la aplicacion
 ├── tests/
 │   ├── test_controller.py
 │   ├── test_processor.py
 │   └── test_logic_rules.py
-├── requirements.txt
+├── requirements.txt      # Dependencias (Flask, kanren)
+├── Procfile              # Configuracion de despliegue (web: python main.py)
 ├── .gitignore
 └── README.md
 ```

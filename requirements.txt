@@ -1,2 +1,2 @@
 flask>=3.0.0
-kanren>=0.3.0
+kanren>=0.2.3
