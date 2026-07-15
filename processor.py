@@ -137,7 +137,7 @@ def _extraer_terminos(texto: str) -> List[str]:
 
     FUNCION PURA.
     Pipeline funcional completo:
-      tokenizar -> filter(stopword) -> filter(cortas) -> unique
+        tokenizar -> filter(stopword) -> filter(cortas) -> unique
     Usa map()/filter() para transformar la lista de tokens en una lista
     limpia de terminos significativos. Deduplica preservando el orden de
     aparicion (orden de relevancia en el texto original).
@@ -484,7 +484,7 @@ def rankear_revistas(
     Args:
         revistas: lista de revistas pre-filtradas por logic_rules.
         preferencias: preferencias del usuario con claves
-                      'palabras_clave', 'tiempo_max', 'impacto_min'.
+                    'palabras_clave', 'tiempo_max', 'impacto_min'.
 
     Returns:
         Revistas ordenadas por puntaje_total descendente, cada una
