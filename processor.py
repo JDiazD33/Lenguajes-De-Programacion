@@ -21,6 +21,14 @@ Paradigma funcional:
 from functools import reduce, partial, lru_cache
 from typing import Dict, List, Tuple, Optional, Callable, Any
 
+# ============================================================
+# STOPWORDS (vocabulario funcional cerrado e inmutable)
+# ============================================================
+# Lista de palabras vacias en espanol + Ingles tecnico basico. Se usa
+# como conjunto inmutable (frozenset) para filtrar terminos irrelevantes
+# al extraer las palabras del titulo y resumen del articulo. Definirla como
+# constante a nivel de modulo preservar la transparencia referencial de
+# las funciones puras que la consumen.
 
 _STOPWORDS: frozenset = frozenset({
     # Articulos, pronombres y preposiciones (espanol)
