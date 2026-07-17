@@ -1,7 +1,10 @@
 """Tests para el modulo controlador y modelo de dominio OOP (controller.py).
+
 Verifica encapsulamiento, herencia, polimorfismo, factory methods,
 value objects, y la orquestacion del sistema de recomendacion.
+
 """
+
 import pytest
 from controller import (
     Revista,
