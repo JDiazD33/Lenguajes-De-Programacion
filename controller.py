@@ -1,16 +1,7 @@
 """Modulo controlador: Flujo imperativo/OOP de la aplicacion web.
 
 Paradigma imperativo / OOP:
-- Clases del dominio: Revista (con herencia), CriterioBusqueda, ResultadoRecomendacion.
-- Herencia y polimorfismo: RevistaOpenAccess y RevistaPremium extienden Revista
-  con comportamiento diferenciado (descripcion_acceso, factor_accesibilidad).
-- Encapsulamiento: atributos privados con @property (getters controlados).
-- Factory method: crear_revista() instancia la subclase correcta.
-- Value Object: CriterioBusqueda encapsula y valida las preferencias.
-- Clase SistemaRecomendacion: orquesta la tuberia multiparadigma.
-- Manejo del ciclo request-response web (rutas, formularios).
-- Coordinacion de los otros modulos (logic_rules, processor) como
-  pasos imperativos dentro del flujo.
+
 """
 
 from flask import Blueprint, render_template, request
