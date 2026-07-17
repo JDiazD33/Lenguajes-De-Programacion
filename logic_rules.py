@@ -468,7 +468,56 @@ def aplicar_reglas(preferencias: Dict[str, str]) -> List[Dict[str, Any]]:
     return resultado_enriquecido
 
 
+# ============================================================
+# MODO FALLBACK (sin kanren)
+# ============================================================
 
+def _filtrar_fallback(preferencias: Dict[str, str]) -> List[Dict[str, Any]]:
+    """Modo fallback cuando kanren no esta instalado.
+
+    Implementa la misma semantica de filtrado con Python puro,
+    incluyendo el etiquetado logico derivado.
+
+    Args:
+        preferencias: dict con criterios de busqueda.
+
+    Returns:
+        Lista de revistas filtradas con etiquetas logicas.
+    """
+    resultado = list(base_datos)
+
+    idx_pref = preferencias.get("indexacion", "").strip().lower()
+    area_pref = preferencias.get("area", "").strip().lower()
+    apc_pref = preferencias.get("apc", "").strip().lower()
+
+    if idx_pref and idx_pref != "cualquier":
+        resultado = [j for j in resultado if j["indexacion"] == idx_pref]
+    if area_pref:
+        estrictos = [j for j in resultado if j["area"] == area_pref]
+        ampliados = [j for j in resultado if j["area"] == "multidisciplinaria"]
+        resultado = estrictos + [j for j in ampliados if j not in estrictos]
+    if apc_pref and apc_pref != "cualquier":
+        resultado = [j for j in resultado if j["apc"] == apc_pref]
+
+    try:
+        tiempo_max = preferencias.get("tiempo_max", "")
+        if tiempo_max:
+            tmax = int(tiempo_max)
+            resultado = [j for j in resultado if j["tiempo_revision"] <= tmax]
+        impacto_min = preferencias.get("impacto_min", "")
+        if impacto_min:
+            imin = float(impacto_min)
+            resultado = [j for j in resultado if j["factor_impacto"] >= imin]
+    except (ValueError, TypeError):
+        pass
+
+    # Enriquecer con etiquetas logicas (modo fallback)
+    resultado_enriquecido = []
+    for revista in resultado:
+        etiquetas = _obtener_etiquetas_logicas(revista["nombre"])
+        resultado_enriquecido.append({**revista, "etiquetas_logicas": etiquetas})
+
+    return resultado_enriquecido
 
 
 # ============================================================
