@@ -191,7 +191,21 @@ class RevistaPremium(Revista):
         return 0.7 
 
 
+def crear_revista(data: Dict[str, Any]) -> Revista:
+    """Factory method: crea la subclase correcta segun los datos.
 
+    Patron de diseno Factory Method: decide en tiempo de ejecucion
+    que subclase instanciar basandose en el atributo 'apc'.
+
+    Args:
+        data: diccionario con los datos de la revista.
+
+    Returns:
+        RevistaOpenAccess si apc='no', RevistaPremium si apc='si'.
+    """
+    if data.get("apc") == "no":
+        return RevistaOpenAccess.from_dict(data)
+    return RevistaPremium.from_dict(data)
 
 
 # ============================================================
