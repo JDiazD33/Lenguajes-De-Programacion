@@ -122,7 +122,34 @@ class TestReglasKanren:
         assert "Ingeniare. Revista Iberoamericana de Ingenieria" in emergentes
 
 
+# ============================================================
+# TESTS: Consultas Publicas (Compatibles con y sin Kanren)
+# ============================================================
 
+class TestConsultasLogicas:
+    """Verifica las funciones de consulta logica del modulo."""
+
+    def test_consultar_destacadas(self):
+        """Valida que consultar_destacadas devuelva revistas con FI >= 10 y tiempo <= 6."""
+        res = consultar_destacadas()
+        assert isinstance(res, list)
+        assert "Nature" in res
+        assert "Science" in res
+        assert "Journal of Cleaner Production" not in res  # tiempo = 7 (>6)
+
+    def test_consultar_accesibles(self):
+        """Valida que consultar_accesibles devuelva revistas abiertas con FI >= 1.0."""
+        res = consultar_accesibles()
+        assert isinstance(res, list)
+        assert "Journal of Applied Physics" in res
+        assert "Nature" not in res  # apc = si
+
+    def test_consultar_emergentes(self):
+        """Valida que consultar_emergentes devuelva revistas abiertas, rapidas y con FI < 1.0."""
+        res = consultar_emergentes()
+        assert isinstance(res, list)
+        assert "Ingeniare. Revista Iberoamericana de Ingenieria" in res
+        assert "Nature" not in res  # apc = si, FI = 49.96
 
 
 # ============================================================
