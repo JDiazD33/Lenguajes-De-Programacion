@@ -176,19 +176,7 @@ class RevistaOpenAccess(Revista):
         return 1.0 
 
 
-class RevistaPremium(Revista):
-    """Subclase: revista con cargos de publicacion (APC = si).
 
-    Demuestra POLIMORFISMO: misma interfaz, comportamiento distinto.
-    """
-
-    def descripcion_acceso(self) -> str:
-        """Polimorfismo: retorna descripcion especifica para premium."""
-        return "Requiere pago de APC (Article Processing Charge)"
-
-    def calcular_factor_accesibilidad(self) -> float:
-        """Polimorfismo: acceso de pago => accesibilidad reducida."""
-        return 0.7
 
 
 def crear_revista(data: Dict[str, Any]) -> Revista:
