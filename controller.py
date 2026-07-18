@@ -160,20 +160,7 @@ class Revista:
         return f"{self._nombre} ({self._area})"
 
 
-class RevistaOpenAccess(Revista):
-    """Subclase: revista sin cargos de publicacion (APC = no).
 
-    Demuestra HERENCIA (extiende Revista) y POLIMORFISMO
-    (sobreescribe descripcion_acceso y calcular_factor_accesibilidad).
-    """
-
-    def descripcion_acceso(self) -> str:
-        """Polimorfismo: retorna descripcion especifica para open access."""
-        return "Publicacion gratuita (sin APC)"
-
-    def calcular_factor_accesibilidad(self) -> float:
-        """Polimorfismo: acceso abierto => maxima accesibilidad."""
-        return 1.0
 
 
 class RevistaPremium(Revista):
