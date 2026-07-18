@@ -524,4 +524,15 @@ def rankear_revistas(
         impacto_min=impacto_min,
     )
 
-    
+    # Paso 4: construir pipeline funcional con compose()
+    # Lee de derecha a izquierda:
+    #   1. map(enriquecer) => agrega puntajes a cada revista
+    #   2. list()          => materializa el iterador
+    #   3. sorted(...)     => ordena por puntaje descendente
+    pipeline_ranking = compose(
+        partial(sorted, key=lambda r: r["puntaje_total"], reverse=True),
+        list,
+        partial(map, enriquecer),
+    )
+
+    return pipeline_ranking(revistas)
