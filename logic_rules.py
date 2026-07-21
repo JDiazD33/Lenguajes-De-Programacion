@@ -194,7 +194,7 @@ if KANREN_AVAILABLE:
 # encadenamiento de reglas (chaining) propio del paradigma logico.
 
 def regla_revista_destacada(x: var) -> Any:
-    """Regla compuesta: una revista es 'destacada' si tiene alto impacto
+    """Regla compuesta: una revista es 'destacadas' si tiene alto impacto
     Y se publica en tiempo rapido o moderado.
 
     Demuestra: conjuncion (lall/AND) + disyuncion (conde/OR) anidadas.
@@ -219,7 +219,7 @@ def regla_revista_destacada(x: var) -> Any:
 
 
 def regla_revista_accesible(x: var) -> Any:
-    """Regla compuesta: una revista es 'accesible' si tiene acceso abierto
+    """Regla compuesta: una revista es 'accesibles' si tiene acceso abierto
     Y tiene al menos impacto medio o alto.
 
     Util para investigadores que buscan revistas sin costo con
@@ -389,7 +389,7 @@ def aplicar_reglas(preferencias: Dict[str, str]) -> List[Dict[str, Any]]:
 
     Args:
         preferencias: dict con claves 'area', 'indexacion', 'apc',
-                      'tiempo_max', 'impacto_min'.
+                    'tiempo_max', 'impacto_min'.
 
     Returns:
         Lista de dicts de revistas que cumplen las reglas, enriquecidas

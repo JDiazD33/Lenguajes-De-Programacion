@@ -21,14 +21,13 @@ Paradigma funcional:
 from functools import reduce, partial, lru_cache
 from typing import Dict, List, Tuple, Optional, Callable, Any
 
-
 # ============================================================
 # STOPWORDS (vocabulario funcional cerrado e inmutable)
 # ============================================================
 # Lista de palabras vacias en espanol + Ingles tecnico basico. Se usa
 # como conjunto inmutable (frozenset) para filtrar terminos irrelevantes
-# al extraer palabras del titulo y resumen del articulo. Definirla como
-# constante a nivel de modulo preserva la transparencia referencial de
+# al extraer las palabras del titulo y resumen del articulo. Definirla como
+# constante a nivel de modulo preservar la transparencia referencial de
 # las funciones puras que la consumen.
 
 _STOPWORDS: frozenset = frozenset({
@@ -138,7 +137,7 @@ def _extraer_terminos(texto: str) -> List[str]:
 
     FUNCION PURA.
     Pipeline funcional completo:
-      tokenizar -> filter(stopword) -> filter(cortas) -> unique
+        tokenizar -> filter(stopword) -> filter(cortas) -> unique
     Usa map()/filter() para transformar la lista de tokens en una lista
     limpia de terminos significativos. Deduplica preservando el orden de
     aparicion (orden de relevancia en el texto original).
@@ -485,7 +484,7 @@ def rankear_revistas(
     Args:
         revistas: lista de revistas pre-filtradas por logic_rules.
         preferencias: preferencias del usuario con claves
-                      'palabras_clave', 'tiempo_max', 'impacto_min'.
+                    'palabras_clave', 'tiempo_max', 'impacto_min'.
 
     Returns:
         Revistas ordenadas por puntaje_total descendente, cada una
